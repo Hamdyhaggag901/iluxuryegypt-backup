@@ -3178,6 +3178,49 @@ async function registerRoutes(app2) {
       res.status(500).json({ message: "Error fetching settings" });
     }
   });
+  app2.post("/api/cms/settings/run-migrations", requireAuth, requireAdmin, async (_req, res) => {
+    const migrations = [
+      {
+        name: "destinations.seo_title",
+        sql: `ALTER TABLE destinations ADD COLUMN IF NOT EXISTS seo_title text`
+      },
+      {
+        name: "destinations.meta_description",
+        sql: `ALTER TABLE destinations ADD COLUMN IF NOT EXISTS meta_description text`
+      },
+      {
+        name: "destinations.schema_markup",
+        sql: `ALTER TABLE destinations ADD COLUMN IF NOT EXISTS schema_markup text`
+      },
+      {
+        name: "destinations.faqs",
+        sql: `ALTER TABLE destinations ADD COLUMN IF NOT EXISTS faqs jsonb NOT NULL DEFAULT '[]'::jsonb`
+      }
+    ];
+    const applied = [];
+    const errors = [];
+    for (const m of migrations) {
+      try {
+        await pool.query(m.sql);
+        applied.push(m.name);
+      } catch (err) {
+        errors.push({ name: m.name, error: err?.message || String(err) });
+      }
+    }
+    if (errors.length > 0) {
+      return res.status(500).json({
+        success: false,
+        message: `Applied ${applied.length}/${migrations.length} migrations with errors`,
+        applied,
+        errors
+      });
+    }
+    res.json({
+      success: true,
+      message: `Successfully applied ${applied.length} migration${applied.length === 1 ? "" : "s"}. Your database is up to date.`,
+      applied
+    });
+  });
   app2.post("/api/cms/settings/change-username", requireAuth, async (req, res) => {
     try {
       const authReq = req;
