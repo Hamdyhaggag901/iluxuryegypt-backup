@@ -11,7 +11,8 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
-import { Shield, Mail, Globe, User, Key, FileText, MessageCircle } from "lucide-react";
+import { Shield, Mail, Globe, User, Key, FileText, MessageCircle, Database, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { z } from "zod";
 import {
   Form,
@@ -63,6 +64,51 @@ export default function AdminSettings() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [activeSection, setActiveSection] = useState<string>("username");
+  const [migrationResult, setMigrationResult] = useState<
+    | { success: true; message: string; applied: string[] }
+    | { success: false; message: string; applied: string[]; errors: Array<{ name: string; error: string }> }
+    | null
+  >(null);
+
+  const runMigrationsMutation = useMutation({
+    mutationFn: async () => {
+      const token = localStorage.getItem("adminToken");
+      const response = await fetch("/api/cms/settings/run-migrations", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw Object.assign(new Error(data.message || "Migration failed"), { data });
+      }
+      return data;
+    },
+    onSuccess: (data) => {
+      setMigrationResult({
+        success: true,
+        message: data.message,
+        applied: data.applied || [],
+      });
+      toast({ title: "Database updated", description: data.message });
+    },
+    onError: (err: any) => {
+      const data = err?.data;
+      setMigrationResult({
+        success: false,
+        message: data?.message || err.message || "Migration failed",
+        applied: data?.applied || [],
+        errors: data?.errors || [{ name: "request", error: err.message }],
+      });
+      toast({
+        title: "Migration failed",
+        description: data?.message || err.message,
+        variant: "destructive",
+      });
+    },
+  });
 
   // Fetch current settings
   const { data: settingsData } = useQuery({
@@ -413,6 +459,15 @@ export default function AdminSettings() {
             >
               <MessageCircle className="h-4 w-4 mr-2" />
               WhatsApp
+            </Button>
+            <Button
+              variant={activeSection === "database" ? "default" : "ghost"}
+              className="w-full justify-start"
+              onClick={() => setActiveSection("database")}
+              data-testid="button-section-database"
+            >
+              <Database className="h-4 w-4 mr-2" />
+              Database
             </Button>
           </CardContent>
         </Card>
@@ -780,6 +835,92 @@ export default function AdminSettings() {
                     </Button>
                   </form>
                 </Form>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Database Migrations */}
+          {activeSection === "database" && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Database className="h-5 w-5 mr-2" />
+                  Database Migrations
+                </CardTitle>
+                <CardDescription>
+                  Apply pending schema updates to the database. Safe to run multiple times — only missing columns are added.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="rounded-lg border p-4 bg-muted/30 space-y-2">
+                  <h3 className="font-semibold text-sm">Pending updates</h3>
+                  <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
+                    <li><code>destinations.seo_title</code> — SEO title field</li>
+                    <li><code>destinations.meta_description</code> — Meta description field</li>
+                    <li><code>destinations.schema_markup</code> — JSON-LD schema markup field</li>
+                    <li><code>destinations.faqs</code> — FAQ list (question/answer pairs)</li>
+                  </ul>
+                </div>
+
+                <Button
+                  type="button"
+                  onClick={() => runMigrationsMutation.mutate()}
+                  disabled={runMigrationsMutation.isPending}
+                  data-testid="button-run-migrations"
+                >
+                  {runMigrationsMutation.isPending ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Updating database...
+                    </>
+                  ) : (
+                    <>
+                      <Database className="h-4 w-4 mr-2" />
+                      Run Database Migration
+                    </>
+                  )}
+                </Button>
+
+                {migrationResult && (
+                  <Alert
+                    variant={migrationResult.success ? "default" : "destructive"}
+                    data-testid="alert-migration-result"
+                  >
+                    {migrationResult.success ? (
+                      <CheckCircle2 className="h-4 w-4" />
+                    ) : (
+                      <AlertCircle className="h-4 w-4" />
+                    )}
+                    <AlertTitle>
+                      {migrationResult.success ? "Database updated" : "Migration finished with errors"}
+                    </AlertTitle>
+                    <AlertDescription>
+                      <p>{migrationResult.message}</p>
+                      {migrationResult.applied.length > 0 && (
+                        <div className="mt-2">
+                          <p className="font-semibold text-xs uppercase tracking-wide">Applied</p>
+                          <ul className="list-disc list-inside text-sm">
+                            {migrationResult.applied.map((name) => (
+                              <li key={name}>{name}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {!migrationResult.success && migrationResult.errors?.length > 0 && (
+                        <div className="mt-2">
+                          <p className="font-semibold text-xs uppercase tracking-wide">Errors</p>
+                          <ul className="list-disc list-inside text-sm">
+                            {migrationResult.errors.map((e, i) => (
+                              <li key={i}>
+                                <code>{e.name}</code>: {e.error}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </AlertDescription>
+                  </Alert>
+                )}
               </CardContent>
             </Card>
           )}

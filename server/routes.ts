@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import express from "express";
 import path from "path";
 import { storage } from "./storage";
+import { pool } from "./db";
 import {
   insertInquirySchema,
   insertUserSchema,
@@ -1585,6 +1586,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error('Error fetching settings:', error);
       res.status(500).json({ message: 'Error fetching settings' });
     }
+  });
+
+  // Run schema migrations (admin-only). Idempotently adds columns introduced
+  // by the SEO + FAQ feature so the live database matches the current code
+  // without needing CLI access.
+  app.post("/api/cms/settings/run-migrations", requireAuth, requireAdmin, async (_req, res) => {
+    const migrations: Array<{ name: string; sql: string }> = [
+      {
+        name: "destinations.seo_title",
+        sql: `ALTER TABLE destinations ADD COLUMN IF NOT EXISTS seo_title text`,
+      },
+      {
+        name: "destinations.meta_description",
+        sql: `ALTER TABLE destinations ADD COLUMN IF NOT EXISTS meta_description text`,
+      },
+      {
+        name: "destinations.schema_markup",
+        sql: `ALTER TABLE destinations ADD COLUMN IF NOT EXISTS schema_markup text`,
+      },
+      {
+        name: "destinations.faqs",
+        sql: `ALTER TABLE destinations ADD COLUMN IF NOT EXISTS faqs jsonb NOT NULL DEFAULT '[]'::jsonb`,
+      },
+    ];
+
+    const applied: string[] = [];
+    const errors: Array<{ name: string; error: string }> = [];
+
+    for (const m of migrations) {
+      try {
+        await (pool as any).query(m.sql);
+        applied.push(m.name);
+      } catch (err: any) {
+        errors.push({ name: m.name, error: err?.message || String(err) });
+      }
+    }
+
+    if (errors.length > 0) {
+      return res.status(500).json({
+        success: false,
+        message: `Applied ${applied.length}/${migrations.length} migrations with errors`,
+        applied,
+        errors,
+      });
+    }
+
+    res.json({
+      success: true,
+      message: `Successfully applied ${applied.length} migration${applied.length === 1 ? "" : "s"}. Your database is up to date.`,
+      applied,
+    });
   });
 
   // Change username
