@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "HI7owFeEpQbdm74tOgwVD"
+uri = "file://changes.tar.gz"
+type = "unspecified"
+title = "changes.tar.gz — 7 source files for the live server"
