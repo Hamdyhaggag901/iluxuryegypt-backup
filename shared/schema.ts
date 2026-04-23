@@ -127,6 +127,10 @@ export const destinations = pgTable("destinations", {
   region: text("region").notNull(),
   featured: boolean("featured").notNull().default(false),
   published: boolean("published").notNull().default(true),
+  seoTitle: text("seo_title"),
+  metaDescription: text("meta_description"),
+  schemaMarkup: text("schema_markup"),
+  faqs: jsonb("faqs").notNull().default([]),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
   createdBy: varchar("created_by").references(() => users.id),
@@ -519,6 +523,12 @@ export const attractionSchema = z.object({
   image: z.string().min(1, "Attraction image is required"),
 });
 
+export const faqSchema = z.object({
+  id: z.string(),
+  question: z.string().min(1, "Question is required"),
+  answer: z.string().min(1, "Answer is required"),
+});
+
 export const insertHotelSchema = createInsertSchema(hotels).omit({
   id: true,
   createdAt: true,
@@ -555,6 +565,10 @@ export const insertDestinationSchema = createInsertSchema(destinations).omit({
   attractions: z.array(attractionSchema).default([]),
   featured: z.boolean().default(false),
   published: z.boolean().default(true),
+  seoTitle: z.string().max(60, "SEO title must be 60 characters or less").optional().nullable(),
+  metaDescription: z.string().max(160, "Meta description must be 160 characters or less").optional().nullable(),
+  schemaMarkup: z.string().optional().nullable(),
+  faqs: z.array(faqSchema).default([]),
 });
 
 export const insertTourSchema = createInsertSchema(tours).omit({
