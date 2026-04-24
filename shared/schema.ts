@@ -129,6 +129,11 @@ export const destinations = pgTable("destinations", {
   published: boolean("published").notNull().default(true),
   seoTitle: text("seo_title"),
   metaDescription: text("meta_description"),
+  focusKeyword: text("focus_keyword"),
+  schemaType: text("schema_type"),
+  ogImage: text("og_image"),
+  canonicalUrl: text("canonical_url"),
+  robots: text("robots"),
   schemaMarkup: text("schema_markup"),
   faqs: jsonb("faqs").notNull().default([]),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -521,6 +526,7 @@ export const attractionSchema = z.object({
   name: z.string().min(1, "Attraction name is required"),
   description: z.string().min(1, "Attraction description is required"),
   image: z.string().min(1, "Attraction image is required"),
+  imageAlt: z.string().optional().default(""),
 });
 
 export const faqSchema = z.object({

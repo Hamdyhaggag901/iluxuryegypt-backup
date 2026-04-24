@@ -85,6 +85,24 @@ export default function DestinationDetail() {
 
   const customSchema = destination?.schemaMarkup?.trim() || null;
   const jsonLd: Array<string | object> = [];
+
+  // Auto-generated structured data from the schemaType dropdown.
+  // Only emitted when there is no custom JSON-LD override.
+  if (!customSchema && destination?.schemaType?.trim()) {
+    const auto: Record<string, any> = {
+      "@context": "https://schema.org",
+      "@type": destination.schemaType.trim(),
+      name: destination.name,
+      description:
+        destination.metaDescription?.trim() ||
+        destination.shortDescription ||
+        destination.description?.slice(0, 200),
+    };
+    if (destination.heroImage) auto.image = destination.heroImage;
+    if (destination.canonicalUrl?.trim()) auto.url = destination.canonicalUrl.trim();
+    jsonLd.push(auto);
+  }
+
   if (customSchema) jsonLd.push(customSchema);
   if (faqJsonLd) jsonLd.push(faqJsonLd);
 
@@ -99,7 +117,9 @@ export default function DestinationDetail() {
       destination?.metaDescription?.trim() ||
       destination?.shortDescription ||
       destination?.description?.slice(0, 160),
-    image: destination?.heroImage,
+    image: destination?.ogImage?.trim() || destination?.heroImage,
+    canonical: destination?.canonicalUrl?.trim() || undefined,
+    robots: destination?.robots?.trim() || undefined,
     jsonLd: jsonLd.length > 0 ? jsonLd : undefined,
   });
 

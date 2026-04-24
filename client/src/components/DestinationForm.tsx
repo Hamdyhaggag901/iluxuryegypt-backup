@@ -25,6 +25,7 @@ interface Attraction {
   name: string;
   description: string;
   image: string;
+  imageAlt: string;
 }
 
 interface FAQ {
@@ -62,6 +63,11 @@ export function DestinationForm({ initialData, onSubmit, isLoading }: Destinatio
       published: true,
       seoTitle: "",
       metaDescription: "",
+      focusKeyword: "",
+      schemaType: "",
+      ogImage: "",
+      canonicalUrl: "",
+      robots: "index,follow",
       schemaMarkup: "",
       faqs: [],
       ...initialData,
@@ -104,6 +110,7 @@ export function DestinationForm({ initialData, onSubmit, isLoading }: Destinatio
       name: "",
       description: "",
       image: "",
+      imageAlt: "",
     };
     setAttractions([...attractions, newAttraction]);
   };
@@ -367,7 +374,7 @@ export function DestinationForm({ initialData, onSubmit, isLoading }: Destinatio
                         <div className="mt-2">
                           <img
                             src={attraction.image}
-                            alt={attraction.name || "Attraction preview"}
+                            alt={attraction.imageAlt || attraction.name || "Attraction preview"}
                             className="w-full max-w-xs h-32 object-cover rounded-lg"
                             onError={(e) => {
                               (e.target as HTMLImageElement).style.display = 'none';
@@ -375,6 +382,17 @@ export function DestinationForm({ initialData, onSubmit, isLoading }: Destinatio
                           />
                         </div>
                       )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Image Alt Text</Label>
+                      <Input
+                        value={attraction.imageAlt || ""}
+                        onChange={(e) => updateAttraction(attraction.id, "imageAlt", e.target.value)}
+                        placeholder="Describe the image for accessibility and SEO (e.g., Sunset over the Great Pyramid of Giza)"
+                        data-testid={`input-attraction-image-alt-${index}`}
+                      />
+                      <p className="text-xs text-muted-foreground">Used for screen readers and image search ranking. Describe what's in the photo.</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -520,7 +538,90 @@ export function DestinationForm({ initialData, onSubmit, isLoading }: Destinatio
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="schemaMarkup">Schema Markup (JSON-LD)</Label>
+                <Label htmlFor="focusKeyword">Focus Keyword</Label>
+                <Input
+                  id="focusKeyword"
+                  {...form.register("focusKeyword")}
+                  placeholder="e.g., luxury Luxor tour"
+                  data-testid="input-destination-focus-keyword"
+                />
+                <p className="text-xs text-muted-foreground">The main keyword you want this page to rank for. Used as a guideline; not embedded directly in tags.</p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="schemaType">Schema Markup Type</Label>
+                  <Select
+                    value={form.watch("schemaType") || ""}
+                    onValueChange={(value) => form.setValue("schemaType", value)}
+                  >
+                    <SelectTrigger data-testid="select-destination-schema-type">
+                      <SelectValue placeholder="Select schema type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="TouristDestination">TouristDestination</SelectItem>
+                      <SelectItem value="TouristAttraction">TouristAttraction</SelectItem>
+                      <SelectItem value="LandmarksOrHistoricalBuildings">LandmarksOrHistoricalBuildings</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">Schema.org @type used for the auto-generated structured data.</p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="robots">Robots</Label>
+                  <Select
+                    value={form.watch("robots") || "index,follow"}
+                    onValueChange={(value) => form.setValue("robots", value)}
+                  >
+                    <SelectTrigger data-testid="select-destination-robots">
+                      <SelectValue placeholder="Select robots directive" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="index,follow">index, follow</SelectItem>
+                      <SelectItem value="noindex,nofollow">noindex, nofollow</SelectItem>
+                      <SelectItem value="index,nofollow">index, nofollow</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">Tells search engines whether to index this page and follow its links.</p>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="ogImage">OG Image URL</Label>
+                <Input
+                  id="ogImage"
+                  {...form.register("ogImage")}
+                  placeholder="https://example.com/share-image.jpg"
+                  data-testid="input-destination-og-image"
+                />
+                <p className="text-xs text-muted-foreground">Image used when this page is shared on Facebook, X, LinkedIn, etc. Recommended 1200x630.</p>
+                {form.watch("ogImage") && (
+                  <div className="mt-2">
+                    <img
+                      src={form.watch("ogImage") || ""}
+                      alt="OG preview"
+                      className="w-full max-w-md h-32 object-cover rounded-lg"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none';
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="canonicalUrl">Canonical URL</Label>
+                <Input
+                  id="canonicalUrl"
+                  {...form.register("canonicalUrl")}
+                  placeholder="https://iluxuryegypt.com/destinations/cairo"
+                  data-testid="input-destination-canonical-url"
+                />
+                <p className="text-xs text-muted-foreground">Preferred URL for this content if it appears in multiple places. Leave empty to use the page URL.</p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="schemaMarkup">Custom Schema Markup (JSON-LD, optional)</Label>
                 <Textarea
                   id="schemaMarkup"
                   rows={8}
@@ -529,7 +630,7 @@ export function DestinationForm({ initialData, onSubmit, isLoading }: Destinatio
                   placeholder='{"@context":"https://schema.org","@type":"TouristDestination","name":"Cairo"}'
                   data-testid="input-destination-schema-markup"
                 />
-                <p className="text-xs text-muted-foreground">Paste valid JSON-LD. It will be embedded in a &lt;script type="application/ld+json"&gt; tag in the page &lt;head&gt;.</p>
+                <p className="text-xs text-muted-foreground">Optional. Paste valid JSON-LD here to override the auto-generated schema above. Embedded in a &lt;script type="application/ld+json"&gt; tag.</p>
                 {form.formState.errors.schemaMarkup && (
                   <p className="text-sm text-destructive">{String(form.formState.errors.schemaMarkup.message)}</p>
                 )}

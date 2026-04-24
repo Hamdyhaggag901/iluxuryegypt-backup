@@ -1609,6 +1609,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         name: "destinations.faqs",
         sql: `ALTER TABLE destinations ADD COLUMN IF NOT EXISTS faqs jsonb NOT NULL DEFAULT '[]'::jsonb`,
       },
+      {
+        name: "destinations.focus_keyword",
+        sql: `ALTER TABLE destinations ADD COLUMN IF NOT EXISTS focus_keyword text`,
+      },
+      {
+        name: "destinations.schema_type",
+        sql: `ALTER TABLE destinations ADD COLUMN IF NOT EXISTS schema_type text`,
+      },
+      {
+        name: "destinations.og_image",
+        sql: `ALTER TABLE destinations ADD COLUMN IF NOT EXISTS og_image text`,
+      },
+      {
+        name: "destinations.canonical_url",
+        sql: `ALTER TABLE destinations ADD COLUMN IF NOT EXISTS canonical_url text`,
+      },
+      {
+        name: "destinations.robots",
+        sql: `ALTER TABLE destinations ADD COLUMN IF NOT EXISTS robots text`,
+      },
     ];
 
     const applied: string[] = [];

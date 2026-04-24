@@ -9,6 +9,10 @@ interface SEOProps {
   titleOverride?: boolean;
   /** Raw JSON-LD string or object to inject as <script type="application/ld+json">. */
   jsonLd?: string | object | Array<string | object>;
+  /** Override the canonical URL. Defaults to current page URL on iluxuryegypt.com. */
+  canonical?: string;
+  /** Robots directive (e.g. "index,follow", "noindex,nofollow"). */
+  robots?: string;
 }
 
 const SITE_NAME = "I.LuxuryEgypt";
@@ -37,7 +41,7 @@ function setLink(rel: string, href: string) {
   el.href = href;
 }
 
-export function useSEO({ title, description, image, type = "website", titleOverride = false, jsonLd }: SEOProps = {}) {
+export function useSEO({ title, description, image, type = "website", titleOverride = false, jsonLd, canonical, robots }: SEOProps = {}) {
   useEffect(() => {
     const path = window.location.pathname;
     const pageTitle = title
@@ -45,7 +49,7 @@ export function useSEO({ title, description, image, type = "website", titleOverr
       : document.title || SITE_NAME;
     const pageDescription = description || DEFAULT_DESCRIPTION;
     const pageImage = image || DEFAULT_IMAGE;
-    const canonicalUrl = `${SITE_URL}${path}`;
+    const canonicalUrl = canonical?.trim() || `${SITE_URL}${path}`;
 
     // Set title
     if (title) {
@@ -54,6 +58,9 @@ export function useSEO({ title, description, image, type = "website", titleOverr
 
     // Set description
     setMeta("description", pageDescription);
+
+    // Robots
+    setMeta("robots", robots?.trim() || "index,follow");
 
     // Canonical
     setLink("canonical", canonicalUrl);
