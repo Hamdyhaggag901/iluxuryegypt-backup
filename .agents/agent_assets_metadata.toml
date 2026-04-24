@@ -12,3 +12,9 @@ id = "mpralK2e_6vHXCLOGzuzi"
 uri = "file://dist.tar.gz"
 type = "unspecified"
 title = "dist.tar.gz — complete production build (35 MB)"
+
+[[outputs]]
+id = "NYPJNZC1bMiKX7kHGfVcb"
+uri = "file://seo-update.zip"
+type = "unspecified"
+title = "seo-update.zip — 4 SEO/FAQ source files (16 KB)"
