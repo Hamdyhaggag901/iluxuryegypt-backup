@@ -21,7 +21,6 @@ interface SiteConfig {
   type: string;
 }
 
-// Default navigation items (fallback)
 const defaultNavItems = [
   { label: "About", id: "about", type: "dropdown" as const, subItems: [
     { label: "Who We Are", href: "/about/who-we-are" },
@@ -47,13 +46,11 @@ export default function Navigation() {
   const [openMobileDropdowns, setOpenMobileDropdowns] = useState<Record<string, boolean>>({});
   const [location] = useLocation();
 
-  // Fetch navigation items from database
   const { data: navItemsResponse } = useQuery<{ success: boolean; navItems: NavItem[] }>({
     queryKey: ["/api/public/nav-items"],
-    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    staleTime: 5 * 60 * 1000,
   });
 
-  // Fetch site config (logo)
   const { data: siteConfigResponse } = useQuery<{ success: boolean; config: Record<string, string> }>({
     queryKey: ["/api/public/site-config"],
     staleTime: 5 * 60 * 1000,
@@ -62,19 +59,16 @@ export default function Navigation() {
   const dbNavItems = navItemsResponse?.navItems;
   const siteConfig = siteConfigResponse?.config;
 
-  // Transform database nav items into the structure needed for rendering
   const navItems = useMemo(() => {
     if (!dbNavItems || dbNavItems.length === 0) {
       return defaultNavItems;
     }
 
-    // Get top-level items (no parent)
     const topLevelItems = dbNavItems
       .filter(item => !item.parentId && item.isVisible)
       .sort((a, b) => a.sortOrder - b.sortOrder);
 
     return topLevelItems.map(item => {
-      // Find child items
       const children = dbNavItems
         .filter(child => child.parentId === item.id && child.isVisible)
         .sort((a, b) => a.sortOrder - b.sortOrder);
@@ -104,7 +98,6 @@ export default function Navigation() {
     });
   }, [dbNavItems]);
 
-  // Get logo from site config
   const logoUrl = useMemo(() => {
     if (!siteConfig) return null;
     return siteConfig.header_logo || null;
@@ -114,7 +107,6 @@ export default function Navigation() {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -124,13 +116,11 @@ export default function Navigation() {
       setIsMobileMenuOpen(false);
       return;
     }
-
     if (location !== "/") {
       window.location.href = `/#${sectionId}`;
       setIsMobileMenuOpen(false);
       return;
     }
-
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
@@ -138,18 +128,11 @@ export default function Navigation() {
     }
   };
 
-  const getDropdownState = (id: string) => {
-    return openDropdowns[id] || false;
-  };
-
+  const getDropdownState = (id: string) => openDropdowns[id] || false;
   const setDropdownState = (id: string, state: boolean) => {
     setOpenDropdowns(prev => ({ ...prev, [id]: state }));
   };
-
-  const getMobileDropdownState = (id: string) => {
-    return openMobileDropdowns[id] || false;
-  };
-
+  const getMobileDropdownState = (id: string) => openMobileDropdowns[id] || false;
   const toggleMobileDropdown = (id: string) => {
     setOpenMobileDropdowns(prev => ({ ...prev, [id]: !prev[id] }));
   };
@@ -172,10 +155,10 @@ export default function Navigation() {
                   data-testid="logo-home"
                 />
               ) : (
-                <h1 className="text-2xl font-serif font-bold text-primary hover:text-accent transition-colors cursor-pointer"
+                <span className="text-2xl font-serif font-bold text-primary hover:text-accent transition-colors cursor-pointer"
                     data-testid="logo-home">
                   I.LUXURYEGYPT
-                </h1>
+                </span>
               )}
             </Link>
           </div>
@@ -201,15 +184,13 @@ export default function Navigation() {
                       <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${getDropdownState(item.id) ? 'rotate-180' : ''}`} />
                       <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"></span>
                     </button>
-
-                    {/* Dropdown Menu */}
                     <div className={`absolute top-full left-0 mt-1 w-64 bg-white rounded-lg shadow-xl border border-primary/10 overflow-hidden transition-all duration-200 ${
                       getDropdownState(item.id) ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
                     }`}>
                       <div className="py-2">
                         {item.subItems?.map((subItem) => (
                           subItem.openInNewTab ? (
-                            <a
+                            
                               key={subItem.href}
                               href={subItem.href}
                               target="_blank"
@@ -237,7 +218,7 @@ export default function Navigation() {
                   </div>
                 ) : item.type === "page" ? (
                   item.openInNewTab ? (
-                    <a
+                    
                       key={item.id}
                       href={item.href!}
                       target="_blank"
@@ -313,7 +294,7 @@ export default function Navigation() {
                       <div className="ml-4 mt-2 space-y-1 border-l-2 border-primary/20 pl-4">
                         {item.subItems?.map((subItem) => (
                           subItem.openInNewTab ? (
-                            <a
+                            
                               key={subItem.href}
                               href={subItem.href}
                               target="_blank"
@@ -343,7 +324,7 @@ export default function Navigation() {
                   </div>
                 ) : item.type === "page" ? (
                   item.openInNewTab ? (
-                    <a
+                    
                       key={item.id}
                       href={item.href!}
                       target="_blank"
