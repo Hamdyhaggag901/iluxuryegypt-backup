@@ -163,7 +163,6 @@ export default function Navigation() {
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
           <div className="hidden lg:block">
             <div className="ml-10 flex items-center space-x-1">
               {navItems.map((item) => (
@@ -259,7 +258,6 @@ export default function Navigation() {
             </div>
           </div>
 
-          {/* Mobile menu button */}
           <div className="lg:hidden">
             <Button
               variant="ghost"
@@ -273,7 +271,6 @@ export default function Navigation() {
           </div>
         </div>
 
-        {/* Mobile Navigation */}
         {isMobileMenuOpen && (
           <div className="lg:hidden border-t border-primary/20 bg-white shadow-lg">
             <div className="px-4 py-6 space-y-2">
