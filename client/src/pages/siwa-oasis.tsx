@@ -3,10 +3,21 @@ import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import { ArrowLeft, MapPin, Clock, Plane } from "lucide-react";
 import { Link } from "wouter";
+import { Helmet } from "react-helmet-async";
 
 export default function SiwaOasis() {
   return (
     <div className="min-h-screen bg-background">
+      {/* --- SEO Metadata Section --- */}
+      <Helmet>
+        <title>Siwa Oasis Luxury Escape | Mystical Desert Safaris & Eco-Resorts | iLuxury Egypt</title>
+        <meta name="description" content="Journey to Siwa Oasis, Egypt's hidden jewel. Experience the Oracle of Amun, surreal salt lakes, and private eco-luxury stays in the heart of the Western Desert with iLuxury Egypt." />
+        <meta property="og:title" content="Siwa Oasis: The Mystical Desert Sanctuary | iLuxury Egypt" />
+        <meta property="og:description" content="Discover the ancient traditions and natural wonders of Siwa. From Cleopatra's Bath to private stargazing in the Great Sand Sea." />
+        <meta name="keywords" content="Siwa Oasis Luxury Travel, Oracle of Amun Tour, Siwa Salt Lakes, Adrère Amellal Experience, Cleopatra Bath Siwa, Egypt Desert Sanctuary" />
+      </Helmet>
+      {/* ---------------------------- */}
+
       <Navigation />
       
       {/* Hero Section */}
