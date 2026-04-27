@@ -3,10 +3,21 @@ import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import { ArrowLeft, MapPin, Clock, Plane } from "lucide-react";
 import { Link } from "wouter";
+import { Helmet } from "react-helmet-async";
 
 export default function Hurghada() {
   return (
     <div className="min-h-screen bg-background">
+      {/* --- SEO Metadata Section --- */}
+      <Helmet>
+        <title>Hurghada Luxury Holidays | Red Sea Diving & VIP Resorts | iLuxury Egypt</title>
+        <meta name="description" content="Experience the ultimate Red Sea escape with iLuxury Egypt. From world-class diving expeditions to private desert safaris and stays at the most exclusive luxury resorts in Hurghada." />
+        <meta property="og:title" content="Hurghada Luxury Travel | Red Sea Diving Paradise | iLuxury Egypt" />
+        <meta property="og:description" content="Explore pristine coral reefs and elite waterfront living with our bespoke Hurghada travel packages." />
+        <meta name="keywords" content="Hurghada Luxury Resorts, Red Sea Diving Tours, Private Desert Safari Hurghada, Giftun Island Private Boat, Luxury Travel Egypt Red Sea" />
+      </Helmet>
+      {/* ---------------------------- */}
+
       <Navigation />
       
       {/* Hero Section */}
