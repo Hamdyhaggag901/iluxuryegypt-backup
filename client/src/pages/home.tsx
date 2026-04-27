@@ -15,9 +15,10 @@ import ScrollToTopButton from "../components/scroll-to-top-button";
 import NewsletterSection from "../components/newsletter-section";
 
 export default function Home() {
+  // تم تحديث العنوان والوصف ليكونوا أكثر احترافية وطولاً متوافقاً مع معايير جوجل
   useSEO({
-    title: "Luxury Egypt Tours & Vacation Packages | Bespoke Private Tours",
-    description: "Experience Egypt in pure luxury with I.LuxuryEgypt. Curated bespoke stays across Egypt's most iconic destinations from Nile-side sanctuaries to Red Sea havens.",
+    title: "iLuxury Egypt | Bespoke Luxury Tours & Private Vacation Packages",
+    description: "Experience Egypt in pure luxury with iLuxury Egypt. We curate bespoke private tours, elite Nile cruises, and exclusive stays across Egypt's most iconic destinations. From the Pyramids to the Red Sea, start your VIP journey today.",
   });
 
   return (
