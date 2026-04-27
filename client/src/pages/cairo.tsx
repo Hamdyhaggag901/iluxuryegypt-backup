@@ -3,10 +3,21 @@ import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import { ArrowLeft, MapPin, Clock, Plane } from "lucide-react";
 import { Link } from "wouter";
+import { Helmet } from "react-helmet-async";
 
 export default function Cairo() {
   return (
     <div className="min-h-screen bg-background">
+      {/* --- SEO Metadata Section --- */}
+      <Helmet>
+        <title>Cairo Luxury Tours | Private Guides & Bespoke Itineraries | iLuxury Egypt</title>
+        <meta name="description" content="Discover the magic of Cairo with iLuxury Egypt. Explore the Giza Pyramids, the Sphinx, and the Egyptian Museum with private expert guides and luxury transfers. Book your bespoke tour today!" />
+        <meta property="og:title" content="Cairo Luxury Tours | iLuxury Egypt" />
+        <meta property="og:description" content="Explore Cairo’s timeless wonders with our elite private tours and luxury travel services." />
+        <meta name="keywords" content="Cairo Luxury Tours, Private Guide Cairo, Egypt Bespoke Travel, Giza Pyramids Tour, Islamic Cairo" />
+      </Helmet>
+      {/* ---------------------------- */}
+
       <Navigation />
       
       {/* Hero Section */}
