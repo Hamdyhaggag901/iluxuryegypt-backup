@@ -3,10 +3,21 @@ import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import { ArrowLeft, MapPin, Clock, Plane } from "lucide-react";
 import { Link } from "wouter";
+import { Helmet } from "react-helmet-async";
 
 export default function Aswan() {
   return (
     <div className="min-h-screen bg-background">
+      {/* --- SEO Metadata Section --- */}
+      <Helmet>
+        <title>Aswan Luxury Tours | Nubian Heritage & Abu Simbel Excursions | iLuxury Egypt</title>
+        <meta name="description" content="Discover the tranquil beauty of Aswan with iLuxury Egypt. From private Philae Temple tours to exclusive Nubian village experiences and luxury Nile cruises. Book your bespoke Aswan journey today." />
+        <meta property="og:title" content="Aswan Luxury Tours | Discover the Nubian Soul | iLuxury Egypt" />
+        <meta property="og:description" content="Experience Egypt's most scenic stretch of the Nile with our elite private tours and cultural expeditions in Aswan." />
+        <meta name="keywords" content="Aswan Luxury Tours, Private Abu Simbel Tour, Philae Temple, Nubian Village Visit, Luxury Nile Cruise Aswan, Felucca Sailing Aswan" />
+      </Helmet>
+      {/* ---------------------------- */}
+
       <Navigation />
       
       {/* Hero Section */}
