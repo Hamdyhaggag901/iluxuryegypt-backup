@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Link } from 'wouter';
 import { MapPin, Clock, Star, Camera, Ship, Building2, TreePine, Waves } from 'lucide-react';
+import { Helmet } from "react-helmet-async";
 
 // Import Alexandria images from assets
 import alexandriaMainImage from '@assets/photo-1742262361725-ed34e4cbbcee_1758110281630.avif';
@@ -49,6 +50,16 @@ export default function Alexandria() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* --- SEO Metadata Section --- */}
+      <Helmet>
+        <title>Alexandria Luxury Tours | Mediterranean Heritage & Private Guides | iLuxury Egypt</title>
+        <meta name="description" content="Explore Alexandria, the Pearl of the Mediterranean. iLuxury Egypt offers bespoke private tours to the Bibliotheca Alexandrina, Qaitbay Citadel, and royal Montaza Palace." />
+        <meta property="og:title" content="Alexandria Luxury Travel | The Mediterranean Pearl | iLuxury Egypt" />
+        <meta property="og:description" content="Experience the Greco-Roman grandeur of Alexandria with elite private tours and luxury Mediterranean experiences." />
+        <meta name="keywords" content="Alexandria Luxury Tours, Private Guide Alexandria, Bibliotheca Alexandrina Tour, Qaitbay Citadel, Montaza Palace Gardens, Luxury Travel Egypt" />
+      </Helmet>
+      {/* ---------------------------- */}
+
       <Navigation />
 
       {/* Hero Section */}
