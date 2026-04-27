@@ -3,10 +3,21 @@ import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import { ArrowLeft, MapPin, Clock, Plane } from "lucide-react";
 import { Link } from "wouter";
+import { Helmet } from "react-helmet-async";
 
 export default function Luxor() {
   return (
     <div className="min-h-screen bg-background">
+      {/* --- SEO Metadata Section --- */}
+      <Helmet>
+        <title>Luxor Luxury Tours | Private Valley of the Kings Access | iLuxury Egypt</title>
+        <meta name="description" content="Unveil the wonders of Luxor, the world's greatest open-air museum. Experience private tours of the Valley of the Kings and Karnak Temple with iLuxury Egypt’s exclusive travel services and expert Egyptologists." />
+        <meta property="og:title" content="Luxor Luxury Tours | Ancient Thebes Revealed | iLuxury Egypt" />
+        <meta property="og:description" content="Explore ancient temples and royal tombs in Luxor with our bespoke luxury itineraries and private guided tours." />
+        <meta name="keywords" content="Luxor Luxury Tours, Valley of the Kings Private Tour, Karnak Temple, Luxor Egyptologist, Luxury Nile Cruise Luxor, Bespoke Egypt Travel" />
+      </Helmet>
+      {/* ---------------------------- */}
+
       <Navigation />
       
       {/* Hero Section */}
