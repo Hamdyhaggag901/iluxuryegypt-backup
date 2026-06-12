@@ -219,6 +219,11 @@ var destinations = pgTable("destinations", {
   published: boolean("published").notNull().default(true),
   seoTitle: text("seo_title"),
   metaDescription: text("meta_description"),
+  focusKeyword: text("focus_keyword"),
+  schemaType: text("schema_type"),
+  ogImage: text("og_image"),
+  canonicalUrl: text("canonical_url"),
+  robots: text("robots"),
   schemaMarkup: text("schema_markup"),
   faqs: jsonb("faqs").notNull().default([]),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -581,7 +586,8 @@ var attractionSchema = z.object({
   id: z.string(),
   name: z.string().min(1, "Attraction name is required"),
   description: z.string().min(1, "Attraction description is required"),
-  image: z.string().min(1, "Attraction image is required")
+  image: z.string().min(1, "Attraction image is required"),
+  imageAlt: z.string().optional().default("")
 });
 var faqSchema = z.object({
   id: z.string(),
@@ -3195,6 +3201,26 @@ async function registerRoutes(app2) {
       {
         name: "destinations.faqs",
         sql: `ALTER TABLE destinations ADD COLUMN IF NOT EXISTS faqs jsonb NOT NULL DEFAULT '[]'::jsonb`
+      },
+      {
+        name: "destinations.focus_keyword",
+        sql: `ALTER TABLE destinations ADD COLUMN IF NOT EXISTS focus_keyword text`
+      },
+      {
+        name: "destinations.schema_type",
+        sql: `ALTER TABLE destinations ADD COLUMN IF NOT EXISTS schema_type text`
+      },
+      {
+        name: "destinations.og_image",
+        sql: `ALTER TABLE destinations ADD COLUMN IF NOT EXISTS og_image text`
+      },
+      {
+        name: "destinations.canonical_url",
+        sql: `ALTER TABLE destinations ADD COLUMN IF NOT EXISTS canonical_url text`
+      },
+      {
+        name: "destinations.robots",
+        sql: `ALTER TABLE destinations ADD COLUMN IF NOT EXISTS robots text`
       }
     ];
     const applied = [];

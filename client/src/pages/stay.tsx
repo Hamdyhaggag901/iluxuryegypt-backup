@@ -293,13 +293,19 @@ export default function Stay() {
             ))}
           </div>
 
+          {!isSpotlight && hotel.description && (
+            <p className="text-muted-foreground text-sm leading-relaxed mb-4 line-clamp-2">
+              {hotel.description}
+            </p>
+          )}
+
           <Link href={`/hotel/${hotel.slug}`}>
             <Button
               className="w-full"
               size={isSpotlight ? "default" : "sm"}
-              data-testid={`button-read-more-${hotel.slug}`}
+              data-testid={`button-book-now-${hotel.slug}`}
             >
-              Read More
+              Book Now
             </Button>
           </Link>
         </CardContent>

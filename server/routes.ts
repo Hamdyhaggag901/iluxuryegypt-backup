@@ -862,6 +862,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get single hotel for CMS editing (admin/editor access)
+  app.get("/api/cms/hotels/:id", requireAuth, requireEditor, async (req, res) => {
+    try {
+      const hotel = await storage.getHotel(req.params.id);
+      if (!hotel) {
+        return res.status(404).json({ message: 'Hotel not found' });
+      }
+      res.json({ success: true, hotel });
+    } catch (error) {
+      console.error('Error fetching hotel for CMS:', error);
+      res.status(500).json({ message: 'Error fetching hotel' });
+    }
+  });
+
   // Tour CMS Routes
   
   // Get tours for CMS management (admin/editor access)
